@@ -13,12 +13,15 @@ Index Dword 0
 Insert Proto Value:Dword
 Print_Tree_Level_Order_Traversing Proto 
 Print_Tree_Pre_Order_Traversing Proto Root_Node:Dword
+Print_Tree_In_Order_Traversing Proto Root_Node:Dword
+Print_Tree_Post_Order_Traversing Proto Root_Node:Dword
 Prompt1 Byte "Level Order Traversal , ",0
 Prompt2 Byte "Pre Order Traversal , ",0
+Prompt3 Byte "In Order Traversal , ",0
+Prompt4 Byte "Post Order Traversal , ",0
 
 .code
 main PROC
-mov Eax , 0
 call Getprocessheap
 mov Handler , Eax
 invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 200
@@ -42,6 +45,13 @@ mov edx , offset Prompt2
 call writestring
 call crlf
 invoke Print_Tree_Pre_Order_Traversing , Root
+call crlf
+call crlf
+call crlf
+mov edx , offset Prompt3
+call writestring
+call crlf
+invoke Print_Tree_In_Order_Traversing , Root
 main Endp
 
 ;--------------------------------------------------------
@@ -159,6 +169,51 @@ Print_Tree_Pre_Order_Traversing Endp
 
 
 
-End Main
 
+
+;--------------------------------------------------------
+Print_Tree_In_Order_Traversing PROC , Root_Node : Dword
+mov esi , Root_Node
+mov al , [esi]
+cmp al , 0
+je Leave_Print_Tree_In_Order_Traversing
+mov Eax , Root_Node
+mov Esi , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mul Multiplier
+add eax , 4
+add esi , eax
+invoke Print_Tree_In_Order_Traversing , esi
+mov Eax , Root_Node
+mov eax , [eax]
+call writedec
+call crlf
+mov eax , Root_Node
+mov Esi , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mul Multiplier
+add eax , 8
+add esi , eax
+invoke Print_Tree_In_Order_Traversing , esi
+jmp Leave_Print_Tree_In_Order_Traversing
+Leave_Print_Tree_In_Order_Traversing:
+ret
+Print_Tree_In_Order_Traversing Endp
+;--------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+End Main
 ;------------------------------------------------------------------------------------------------------------------------------------------------------------------
