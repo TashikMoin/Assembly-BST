@@ -1,3 +1,4 @@
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------
 INCLUDE irvine32.inc
 
 .data
@@ -10,10 +11,13 @@ Divisor Byte 4
 Index Dword 0
 
 Insert Proto Value:Dword
-Prompt_Tree_Print Byte "Level Order Traversal , ",0
+Print_Tree_Level_Order_Traversing Proto 
+Print_Tree_Pre_Order_Traversing Proto Root_Node:Dword
+Prompt1 Byte "Level Order Traversal , ",0
+Prompt2 Byte "Pre Order Traversal , ",0
 
 .code
-main proc
+main PROC
 mov Eax , 0
 call Getprocessheap
 mov Handler , Eax
@@ -30,11 +34,18 @@ invoke Insert , 45
 invoke Insert , 10
 invoke Insert , 17
 invoke Insert , 7
-call Print_Tree_Level_Order_Traversing
-main endp
+invoke Print_Tree_Level_Order_Traversing
+call crlf
+call crlf
+call crlf
+mov edx , offset Prompt2
+call writestring
+call crlf
+invoke Print_Tree_Pre_Order_Traversing , Root
+main Endp
 
-
-Insert proc , Value : Dword   ; Start Of Insert Procedure
+;--------------------------------------------------------
+Insert PROC , Value : Dword   ; Start Of Insert Procedure
 mov eax , Esi
 sub eax , Root
 div Divisor
@@ -45,13 +56,13 @@ je Root_Case
 cmp Value , ebx
 jg Right_Child_Case
 jl Left_Child_Case
-
+;------------------
 Root_Case :
 mov Ebx , Value
 mov [Esi] , Ebx
 inc Total_Nodes
 jmp Leave_Insert
-
+;------------------
 Right_Child_Case:
 mov eax , Index
 imul Multiplier
@@ -59,7 +70,7 @@ add eax , 8
 Add Esi ,  eax
 invoke Insert , Value
 jmp Leave_Insert
-
+;------------------
 Left_Child_Case:
 mov eax , Index
 imul Multiplier
@@ -67,23 +78,23 @@ Add eax , 4
 Add Esi ,  Eax
 invoke Insert , Value
 jmp Leave_Insert
-
+;------------------
 Leave_Insert:
 mov Esi , Root
 Mov Index , 0
 ret
-Insert endp  ; End Of Insert Procedure
+Insert Endp                  ; End Of Insert Procedure
+;-----------------------------------------------------
 
 
 
 
-
-
-Print_Tree_Level_Order_Traversing proc
+;------------------------------------------------------
+Print_Tree_Level_Order_Traversing PROC
 push Ebp 
 mov Ebp , Esp
 mov Ecx , Total_Nodes
-mov Edx , Offset Prompt_Tree_Print
+mov Edx , Offset Prompt1
 call writestring
 call crlf
 mov Esi , Root
@@ -101,8 +112,53 @@ inc ecx
 Loop Printing_Tree
 pop Ebp
 ret
-Print_Tree_Level_Order_Traversing endp
+Print_Tree_Level_Order_Traversing Endp
+;--------------------------------------------------------
 
 
 
-end main
+
+
+
+;--------------------------------------------------------
+Print_Tree_Pre_Order_Traversing PROC , Root_Node : Dword
+mov Eax , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mov Eax , Root_Node
+mov Eax , [Eax]
+cmp Eax , 0
+je Leave_Print_Tree_Pre_Order_Traversing
+call Writedec
+call crlf
+mov Esi , Root_Node
+mov Eax , Index
+mul Multiplier
+add Eax , 4
+add esi , eax
+invoke Print_Tree_Pre_Order_Traversing , Esi
+mov Eax , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mov Esi , Root_Node
+mov Eax , Index
+mul Multiplier
+add Eax , 8
+add esi , eax
+mov bl , [esi]
+invoke Print_Tree_Pre_Order_Traversing , Esi
+jmp Leave_Print_Tree_Pre_Order_Traversing
+Leave_Print_Tree_Pre_Order_Traversing:
+ret
+Print_Tree_Pre_Order_Traversing Endp
+;--------------------------------------------------------
+
+
+
+
+
+End Main
+
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------
