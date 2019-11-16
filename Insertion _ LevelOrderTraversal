@@ -1,0 +1,108 @@
+INCLUDE irvine32.inc
+
+.data
+
+Handler Dword 0
+Root Dword 0
+Total_Nodes Dword 0
+Multiplier Byte 4
+Divisor Byte 4
+Index Dword 0
+
+Insert Proto Value:Dword
+Prompt_Tree_Print Byte "Level Order Traversal , ",0
+
+.code
+main proc
+mov Eax , 0
+call Getprocessheap
+mov Handler , Eax
+invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 200
+mov Root , Eax
+mov Esi , Eax
+invoke Insert , 25
+invoke Insert , 20
+invoke Insert , 38
+invoke Insert , 15
+invoke Insert , 23
+invoke Insert , 30
+invoke Insert , 45
+invoke Insert , 10
+invoke Insert , 17
+invoke Insert , 7
+call Print_Tree_Level_Order_Traversing
+main endp
+
+
+Insert proc , Value : Dword   ; Start Of Insert Procedure
+mov eax , Esi
+sub eax , Root
+div Divisor
+mov Index , eax
+mov ebx , [Esi]
+cmp ebx , 0
+je Root_Case
+cmp Value , ebx
+jg Right_Child_Case
+jl Left_Child_Case
+
+Root_Case :
+mov Ebx , Value
+mov [Esi] , Ebx
+inc Total_Nodes
+jmp Leave_Insert
+
+Right_Child_Case:
+mov eax , Index
+imul Multiplier
+add eax , 8
+Add Esi ,  eax
+invoke Insert , Value
+jmp Leave_Insert
+
+Left_Child_Case:
+mov eax , Index
+imul Multiplier
+Add eax , 4
+Add Esi ,  Eax
+invoke Insert , Value
+jmp Leave_Insert
+
+Leave_Insert:
+mov Esi , Root
+Mov Index , 0
+ret
+Insert endp  ; End Of Insert Procedure
+
+
+
+
+
+
+Print_Tree_Level_Order_Traversing proc
+push Ebp 
+mov Ebp , Esp
+mov Ecx , Total_Nodes
+mov Edx , Offset Prompt_Tree_Print
+call writestring
+call crlf
+mov Esi , Root
+Printing_Tree:
+mov Eax , [Esi]
+cmp eax , 0
+je Do_Not_Write_Number
+call writedec
+call crlf
+add Esi , 4
+Loop Printing_Tree
+Do_Not_Write_Number :
+add Esi , 4
+inc ecx
+Loop Printing_Tree
+pop Ebp
+ret
+Print_Tree_Level_Order_Traversing endp
+
+
+
+end main
