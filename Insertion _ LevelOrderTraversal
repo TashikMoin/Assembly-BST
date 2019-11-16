@@ -10,32 +10,33 @@ Multiplier Byte 4
 Divisor Byte 4
 Index Dword 0
 
+Search Proto Value:Dword
 Insert Proto Value:Dword
 Print_Tree_Level_Order_Traversing Proto 
 Print_Tree_Pre_Order_Traversing Proto Root_Node:Dword
 Print_Tree_In_Order_Traversing Proto Root_Node:Dword
 Print_Tree_Post_Order_Traversing Proto Root_Node:Dword
-Prompt1 Byte "Level Order Traversal , ",0
-Prompt2 Byte "Pre Order Traversal , ",0
-Prompt3 Byte "In Order Traversal , ",0
-Prompt4 Byte "Post Order Traversal , ",0
+Prompt1 Byte "Level Order Traversal , " , 0
+Prompt2 Byte "Pre Order Traversal , " , 0
+Prompt3 Byte "In Order Traversal , " , 0
+Prompt4 Byte "Post Order Traversal , " , 0
+SearchF Byte "Search Result Found" , 0
+SearchNF Byte "Search Result Not Found" , 0
+
 
 .code
 main PROC
 call Getprocessheap
 mov Handler , Eax
-invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 200
+invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 1500
 mov Root , Eax
 mov Esi , Eax
-invoke Insert , 25
-invoke Insert , 20
-invoke Insert , 38
-invoke Insert , 15
-invoke Insert , 23
-invoke Insert , 30
-invoke Insert , 45
-invoke Insert , 10
-invoke Insert , 17
+invoke Insert , 1
+invoke Insert , 2
+invoke Insert , 3
+invoke Insert , 4
+invoke Insert , 5
+invoke Insert , 6
 invoke Insert , 7
 invoke Print_Tree_Level_Order_Traversing
 call crlf
@@ -52,6 +53,18 @@ mov edx , offset Prompt3
 call writestring
 call crlf
 invoke Print_Tree_In_Order_Traversing , Root
+call crlf
+call crlf
+call crlf
+mov edx , offset Prompt4
+call writestring
+call crlf
+invoke Print_Tree_Post_Order_Traversing , Root
+call crlf
+call crlf
+call crlf
+invoke Search , 45
+
 main Endp
 
 ;--------------------------------------------------------
@@ -121,6 +134,7 @@ add Esi , 4
 inc ecx
 Loop Printing_Tree
 pop Ebp
+mov esi , Root
 ret
 Print_Tree_Level_Order_Traversing Endp
 ;--------------------------------------------------------
@@ -161,6 +175,7 @@ mov bl , [esi]
 invoke Print_Tree_Pre_Order_Traversing , Esi
 jmp Leave_Print_Tree_Pre_Order_Traversing
 Leave_Print_Tree_Pre_Order_Traversing:
+mov esi , Root
 ret
 Print_Tree_Pre_Order_Traversing Endp
 ;--------------------------------------------------------
@@ -201,6 +216,7 @@ add esi , eax
 invoke Print_Tree_In_Order_Traversing , esi
 jmp Leave_Print_Tree_In_Order_Traversing
 Leave_Print_Tree_In_Order_Traversing:
+mov esi , Root
 ret
 Print_Tree_In_Order_Traversing Endp
 ;--------------------------------------------------------
@@ -208,6 +224,96 @@ Print_Tree_In_Order_Traversing Endp
 
 
 
+
+
+;--------------------------------------------------------
+Print_Tree_Post_Order_Traversing PROC , Root_Node : Dword
+mov esi , Root_Node
+mov al , [esi]
+cmp al , 0
+je Leave_Print_Tree_Post_Order_Traversing
+mov Eax , Root_Node
+mov Esi , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mul Multiplier
+add eax , 4
+add esi , eax
+invoke Print_Tree_Post_Order_Traversing , esi
+mov eax , Root_Node
+mov Esi , Root_Node
+sub Eax , Root
+div Divisor
+mov Index , Eax
+mul Multiplier
+add eax , 8
+add esi , eax
+invoke Print_Tree_Post_Order_Traversing , esi
+mov Eax , Root_Node
+mov eax , [eax]
+call writedec
+call crlf
+jmp Leave_Print_Tree_Post_Order_Traversing
+Leave_Print_Tree_Post_Order_Traversing:
+mov esi , Root
+ret
+Print_Tree_Post_Order_Traversing Endp
+;--------------------------------------------------------
+
+
+
+
+;--------------------------------------------------------
+Search PROC , Value : Dword   
+mov eax , Esi
+sub eax , Root
+div Divisor
+mov Index , eax
+mov ebx , [Esi]
+cmp ebx , 0
+je Not_Found_Case
+cmp Value , ebx
+je Found_Case
+jg Search_Right_Sub_Tree_Case
+jl Search_Left_Sub_Tree_Case
+;------------------
+Not_Found_Case :
+mov Edx , Offset SearchNF
+call crlf
+call writestring
+jmp Leave_Search
+;------------------
+Found_Case:
+mov edx , offset SearchF
+call crlf
+call writestring
+jmp Leave_Search
+;------------------
+Search_Right_Sub_Tree_Case:
+mov eax , Index
+imul Multiplier
+add eax , 8
+Add Esi ,  eax
+invoke Search , Value
+jmp Leave_Search
+;------------------
+Search_Left_Sub_Tree_Case:
+mov eax , Index
+imul Multiplier
+Add eax , 4
+Add Esi ,  Eax
+invoke Search , Value
+jmp Leave_Search
+;------------------
+Leave_Search:
+call crlf
+call crlf
+mov Esi , Root
+Mov Index , 0
+ret
+Search Endp                 
+;-----------------------------------------------------
 
 
 
