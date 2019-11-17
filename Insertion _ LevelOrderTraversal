@@ -32,9 +32,9 @@ invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 1500
 mov Root , Eax
 mov Esi , Eax
 invoke Insert , 1
-invoke Insert , 2
+invoke Insert , 1
 invoke Insert , 3
-invoke Insert , 4
+invoke Insert , 3
 invoke Insert , 5
 invoke Insert , 6
 invoke Insert , 7
@@ -63,7 +63,7 @@ invoke Print_Tree_Post_Order_Traversing , Root
 call crlf
 call crlf
 call crlf
-invoke Search , 45
+invoke Search , 4
 
 main Endp
 
@@ -79,6 +79,7 @@ je Root_Case
 cmp Value , ebx
 jg Right_Child_Case
 jl Left_Child_Case
+je Leave_Insert
 ;------------------
 Root_Case :
 mov Ebx , Value
