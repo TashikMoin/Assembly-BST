@@ -9,9 +9,13 @@ Total_Nodes Dword 0
 Multiplier Byte 4
 Divisor Byte 4
 Index Dword 0
+Min Dword 0
+Max Dword 0
 
 Search Proto Value:Dword
 Insert Proto Value:Dword
+Find_Min Proto 
+Find_Max Proto 
 Print_Tree_Level_Order_Traversing Proto 
 Print_Tree_Pre_Order_Traversing Proto Root_Node:Dword
 Print_Tree_In_Order_Traversing Proto Root_Node:Dword
@@ -20,6 +24,8 @@ Prompt1 Byte "Level Order Traversal , " , 0
 Prompt2 Byte "Pre Order Traversal , " , 0
 Prompt3 Byte "In Order Traversal , " , 0
 Prompt4 Byte "Post Order Traversal , " , 0
+Prompt5 Byte "Minimum = " , 0
+Prompt6 Byte "Maximum = " , 0
 SearchF Byte "Search Result Found" , 0
 SearchNF Byte "Search Result Not Found" , 0
 
@@ -31,13 +37,14 @@ mov Handler , Eax
 invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 1500
 mov Root , Eax
 mov Esi , Eax
-invoke Insert , 1
-invoke Insert , 1
-invoke Insert , 3
-invoke Insert , 3
-invoke Insert , 5
-invoke Insert , 6
-invoke Insert , 7
+invoke Insert , 75
+invoke Insert , 67
+invoke Insert , 33
+invoke Insert , 25
+invoke Insert , 150
+invoke Insert , 10
+invoke Insert , 87
+call crlf
 invoke Print_Tree_Level_Order_Traversing
 call crlf
 call crlf
@@ -61,10 +68,12 @@ call writestring
 call crlf
 invoke Print_Tree_Post_Order_Traversing , Root
 call crlf
+invoke Search , 5
 call crlf
+invoke Find_Min
 call crlf
-invoke Search , 4
-
+invoke Find_Max
+call crlf
 main Endp
 
 ;--------------------------------------------------------
@@ -308,8 +317,6 @@ invoke Search , Value
 jmp Leave_Search
 ;------------------
 Leave_Search:
-call crlf
-call crlf
 mov Esi , Root
 Mov Index , 0
 ret
@@ -318,7 +325,66 @@ Search Endp
 
 
 
+Find_Min PROC 
+mov eax , Esi
+sub eax , Root
+div Divisor
+mov Index , eax
+mov bl , 0
+cmp [esi] , bl
+je Print_Min
+mov eax , Index
+imul Multiplier
+Add eax , 4
+mov ebx , [esi]
+mov min , ebx
+Add Esi ,  Eax
+invoke Find_Min 
+jmp Leave_Find_Min
+Print_Min:
+mov edx , offset Prompt5
+call crlf
+call crlf
+call writestring
+mov eax , min
+call writedec
+jmp Leave_Find_Min
+Leave_Find_Min:
+mov esi , root
+ret
+Find_Min Endp
 
+
+
+
+Find_Max PROC 
+mov eax , Esi
+sub eax , Root
+div Divisor
+mov Index , eax
+mov bl , 0
+cmp [esi] , bl
+je Print_Max
+mov eax , Index
+imul Multiplier
+Add eax , 8
+mov ebx , [esi]
+mov max , ebx
+Add Esi ,  Eax
+invoke Find_Max
+jmp Leave_Find_Max
+Print_Max:
+mov edx , offset Prompt6
+call crlf
+call crlf
+call writestring
+mov eax , max
+call writedec
+jmp Leave_Find_Max
+Leave_Find_Max:
+mov esi , root
+ret
+Find_Max Endp
 
 
 
