@@ -50,8 +50,12 @@ invoke Insert , 18
 invoke Insert , 30
 invoke Insert , 16
 invoke Insert , 19
-invoke Delete , 20
 call crlf
+invoke Print_Tree_Level_Order_Traversing
+call crlf
+call crlf
+call crlf
+invoke Delete , 20
 invoke Print_Tree_Level_Order_Traversing
 call crlf
 call crlf
