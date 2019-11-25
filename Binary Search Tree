@@ -12,20 +12,24 @@ Index Dword 0
 Min Dword 0
 Max Dword 0
 
-Search Proto Value:Dword
+
 Insert Proto Value:Dword
+Search Proto Value:Dword
+Delete Proto Value:Dword
 Find_Min Proto 
 Find_Max Proto 
 Print_Tree_Level_Order_Traversing Proto 
 Print_Tree_Pre_Order_Traversing Proto Root_Node:Dword
 Print_Tree_In_Order_Traversing Proto Root_Node:Dword
 Print_Tree_Post_Order_Traversing Proto Root_Node:Dword
-Prompt1 Byte "Level Order Traversal , " , 0
+Prompt1 Byte "Breadth First Search , " , 0
 Prompt2 Byte "Pre Order Traversal , " , 0
 Prompt3 Byte "In Order Traversal , " , 0
 Prompt4 Byte "Post Order Traversal , " , 0
 Prompt5 Byte "Minimum = " , 0
 Prompt6 Byte "Maximum = " , 0
+Prompt7 Byte "The Value Which Is To Be Deleted Is Not Found ", 0
+Prompt8 Byte "The Value Has Been Deleted Successfully ",0
 SearchF Byte "Search Result Found" , 0
 SearchNF Byte "Search Result Not Found" , 0
 
@@ -37,13 +41,16 @@ mov Handler , Eax
 invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 1500
 mov Root , Eax
 mov Esi , Eax
-invoke Insert , 75
-invoke Insert , 67
-invoke Insert , 33
-invoke Insert , 25
-invoke Insert , 150
+invoke Insert , 15
 invoke Insert , 10
-invoke Insert , 87
+invoke Insert , 20
+invoke Insert , 8
+invoke Insert , 12
+invoke Insert , 18
+invoke Insert , 30
+invoke Insert , 16
+invoke Insert , 19
+invoke Delete , 20
 call crlf
 invoke Print_Tree_Level_Order_Traversing
 call crlf
@@ -68,11 +75,16 @@ call writestring
 call crlf
 invoke Print_Tree_Post_Order_Traversing , Root
 call crlf
-invoke Search , 5
+invoke Search , 87
 call crlf
 invoke Find_Min
 call crlf
 invoke Find_Max
+call crlf
+call crlf
+call crlf
+call crlf
+call crlf
 call crlf
 main Endp
 
@@ -353,8 +365,7 @@ Leave_Find_Min:
 mov esi , root
 ret
 Find_Min Endp
-
-
+;-----------------------------------------------------
 
 
 Find_Max PROC 
@@ -385,7 +396,70 @@ Leave_Find_Max:
 mov esi , root
 ret
 Find_Max Endp
+;-----------------------------------------------------
 
+Delete PROC , Value : Dword   
+mov ecx , Total_Nodes
+mov eax , ecx
+imul Multiplier
+mov ecx , eax
+mov eax , Value
+Find_Value:
+cmp [esi] , eax
+je Delete_Value
+add esi , 4
+loop Find_Value
+;---- Value Not Found Case -------
+mov edx , offset Prompt7
+call crlf
+call writestring
+call crlf
+jmp Leave_Delete
+;----- Delete Case -----------
+Delete_Value:
+mov edi , esi ; temp storing the address of the node which is to be deleted
+mov eax , Esi
+sub eax , Root
+div Divisor
+mov Index , eax
+mov eax , Index
+imul Multiplier
+add eax , 4
+add esi , eax
+mov ecx , 10
+mov ebx , esi
+Find_In_Order_Predecessor:
+mov edx , 0
+cmp [esi] , edx
+je In_Order_Predecessor_Found
+mov ebx , esi
+mov eax , esi
+sub eax , root
+div Divisor
+mov Index , eax
+mov eax , Index
+imul Multiplier
+Add eax , 8
+add esi , eax
+inc ecx
+loop Find_In_Order_Predecessor
+In_Order_Predecessor_Found:
+mov eax , [ebx]
+mov [edi] , eax
+mov eax , 0
+mov [ebx] , eax
+dec Total_Nodes
+mov edx , offset Prompt8
+call crlf
+call writestring
+call crlf
+jmp Leave_Delete
+;----------------
+Leave_Delete:
+mov esi , root
+ret
+Delete Endp
+;----------------------------------------------------------------------
 
 
 End Main
