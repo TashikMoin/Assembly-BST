@@ -51,7 +51,7 @@ ThankYou Byte "                                            ....ThankYou....     
 ; For Characters Tree The Formula For Left & Right Children Will Be : ( 2*index + 1 ) , ( 2*index + 2 ) 
 .code
 main PROC
-; https://yongdanielliang.github.io/animation/web/BST.html use this link to generate a tree and match the outputs of pre,in,and post orders
+; https://yongdanielliang.github.io/animation/web/BST.html visualization link
 call Getprocessheap
 mov Handler , Eax
 invoke Heapalloc , Handler , HEAP_ZERO_MEMORY , 1500
